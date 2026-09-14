@@ -44,29 +44,11 @@ services:
       NODE_ENV: production
       PORT: ${PORT:-5001}
       PSQL_DB_URL: postgresql://${POSTGRES_USER:-alexalexdev}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-vin_check}
-    expose:
-      - '${PORT:-5001}'
+    ports:
+      - '127.0.0.1:${PORT:-5001}:${PORT:-5001}'
     depends_on:
       db:
         condition: service_healthy
 
-  caddy:
-    image: caddy:2-alpine
-    restart: unless-stopped
-    environment:
-      DOMAIN: ${DOMAIN:?DOMAIN is required}
-      PORT: ${PORT:-5001}
-    ports:
-      - '80:80'
-      - '443:443'
-    volumes:
-      - ./Caddyfile:/etc/caddy/Caddyfile:ro
-      - caddy_data:/data
-      - caddy_config:/config
-    depends_on:
-      - api
-
 volumes:
   vin_check_db_data_prod:
-  caddy_data:
-  caddy_config:
