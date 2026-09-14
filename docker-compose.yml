@@ -1,0 +1,25 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+      args:
+        PORT: ${PORT:-5001}
+    env_file:
+      - .env
+    environment:
+      NODE_ENV: development
+      PORT: ${PORT:-5001}
+      PSQL_DB_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@host.docker.internal:${POSTGRES_PORT:-5432}/${POSTGRES_DB}?schema=public
+    extra_hosts:
+      - 'host.docker.internal:host-gateway'
+    ports:
+      - '${PORT:-5001}:${PORT:-5001}'
+    volumes:
+      - ./:/app
+      - api_node_modules:/app/node_modules
+      - api_generated:/app/src/generated
+
+volumes:
+  api_node_modules:
+  api_generated:
